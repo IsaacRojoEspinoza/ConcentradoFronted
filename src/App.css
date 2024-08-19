@@ -870,3 +870,44 @@
     margin-left: 16px !important;
   }
 }
+
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra el contenido horizontalmente */
+  text-align: center;
+  margin: 10px; /* Espaciado entre las tarjetas */
+  border: none; /* Elimina el borde predeterminado */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Añade una sombra suave para el efecto de elevación */
+}
+
+.card-img-wrapper {
+  width: 350px; /* Ajusta el tamaño según tus necesidades */
+  height: 350px; /* Ajusta el tamaño según tus necesidades */
+  border-radius: 0%; /* Hace que el div sea circular */
+  overflow: hidden; /* Oculta cualquier parte de la imagen que se desborde del círculo */
+  display: flex;
+  align-items: center; /* Centra la imagen verticalmente dentro del contenedor circular */
+  justify-content: center; /* Centra la imagen horizontalmente dentro del contenedor circular */
+}
+
+.card-img-top {
+  width: 100%; /* Ajusta para que la imagen ocupe todo el contenedor circular */
+  height: 100%; /* Ajusta para que la imagen ocupe todo el contenedor circular */
+  object-fit: cover; /* Asegura que la imagen cubra el área circular */
+}
+
+.card-body {
+  padding: 1rem; /* Espaciado dentro del contenedor del texto */
+}
+
+.card-title {
+  margin: 0.5rem 0; /* Margen para el título */
+  font-size: 1rem; /* Ajusta el tamaño de la fuente según tus necesidades */
+}
+
+.card-text {
+  margin: 0; /* Margen para el texto */
+  font-size: 0.875rem; /* Ajusta el tamaño de la fuente según tus necesidades */
+}
