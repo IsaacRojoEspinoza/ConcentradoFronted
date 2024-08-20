@@ -21,11 +21,6 @@ export const Home = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/home');
-        // const response = await axios.get('http://127.0.0.1:8000/home', {
-        //   headers: {
-        //     Authorization: `Token ${localStorage.getItem('token')}`,
-        //   },
-        // });  
         console.log(response.data);
         setTaskData(response.data);
       } catch (error) {

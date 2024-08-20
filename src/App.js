@@ -11,6 +11,7 @@ import { Analysis } from './components/analysis/analysis';
 import Settings from './components/settings/settings';
 import { Login } from './components/login/login';
 import { SignUp } from './components/login/signup';
+import { Avance } from './components/avance/avance';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { ToastContainer, toast } from 'react-toastify';
 // import 'react-calendar-datetime-picker/dist/index.css'
@@ -26,6 +27,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/avance" element={<Avance />} />
         <Route path="/home" element={<Home />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/calendar" element={<Calender />} />

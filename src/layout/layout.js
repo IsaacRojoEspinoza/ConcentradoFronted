@@ -133,23 +133,15 @@ function Layout({ children }) {
                             <NavLink className={({ isActive }) => isActive ? "side-menu-item side-menu-active " : "side-menu-item "} to={"/home"}>
                                 <div className={'d-flex'}>
                                     <FeatherIcon icon="home" className={!open ? 'me-2' : "ms-1"} />
-                                    {!open && <div className={'trans-1'}>Inicio</div>}
+                                    {!open && <div className={'trans-1'}>Listado Entidades</div>}
                                 </div>
                             </NavLink>
                         </div>
                         <div className={"w-100 px-sm-2"}>
-                            <NavLink className={({ isActive }) => isActive ? "side-menu-item side-menu-active " : "side-menu-item "} to={"/tasks"}>
+                            <NavLink className={({ isActive }) => isActive ? "side-menu-item side-menu-active " : "side-menu-item "} to={"/avance"}>
                                 <div className={'d-flex'}>
                                     <FeatherIcon icon="user-check" className={!open ? 'me-2' : "ms-1"} />
-                                    {!open && <div className={''}>Entregables</div>}
-                                </div>
-                            </NavLink>
-                        </div>
-                        <div className={"w-100 px-sm-2"}>
-                            <NavLink className={({ isActive }) => isActive ? "side-menu-item side-menu-active " : "side-menu-item "} to={"/calendar"}>
-                                <div className={'d-flex'}>
-                                    <FeatherIcon icon="calendar" className={!open ? 'me-2' : "ms-1"} />
-                                    {!open && <div className={''}>Calendario</div>}
+                                    {!open && <div className={''}>Avance Total</div>}
                                 </div>
                             </NavLink>
                         </div>
