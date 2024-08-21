@@ -27,28 +27,34 @@ export const Home = () => {
 
   return (
     <Layout>
-      <div className="row row-cols-1 row-cols-md-4 g-4">
-        {cardData.map((card, index) => (
-          <div className="col d-flex justify-content-center" key={index}>
-                   <Link
-            to="/avance"
-            state={{ entidad: card.entidad }} // Pasa el parámetro 'entidad' a través del estado
-            className="text-decoration-none"
-          >
-              <div className="card">
-                <div className="card-img-wrapper">
-                  <img src={card.imgSrc} className="card-img-top" alt={`Card ${index + 1}`} />
-                </div>
-                <div className="card-body">
-                  <h5 className="card-title">{card.title}</h5>
-                  <p className="card-text">{card.text}</p>
-                </div>
+      <div className="container">
+        <div className="container-widget">
+          {/* Row with responsive columns */}
+          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {cardData.map((card, index) => (
+              <div className="col d-flex justify-content-center" key={index}>
+                <Link
+                  to="/avance"
+                  state={{ entidad: card.entidad }} // Pasa el parámetro 'entidad' a través del estado
+                  className="text-decoration-none"
+                >
+                  <div className="card">
+                    <div className="card-img-wrapper">
+                      <img src={card.imgSrc} className="card-img-top" alt={`Card ${index + 1}`} />
+                    </div>
+                    <div className="card-body">
+                      <h5 className="card-title">{card.title}</h5>
+                      <p className="card-text">{card.text}</p>
+                    </div>
+                  </div>
+                </Link>
               </div>
-            </Link>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </Layout>
   );
+  
 
 };

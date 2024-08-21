@@ -3,6 +3,7 @@ import Layout from '../../layout/layout';
 import axios from 'axios';
 import { values, pick, filter } from "underscore";
 import { useLocation } from 'react-router-dom';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 
 export const Avance = () => {
   const [AvanceAllList, setAvanceAllList] = useState([]);
@@ -10,6 +11,7 @@ export const Avance = () => {
   const [update] = useState(false);
   const location = useLocation();
   const { entidad } = location.state || {};
+  var data ;
 
   console.log("soy la entidad numero:",entidad);
 
@@ -29,12 +31,26 @@ export const Avance = () => {
     (async () => await fetchData())();
   }, [update]);
 
-  async function fetchData() {
-    const data = await axios.get("http://127.0.0.1:8000/avance", {
+  async  function fetchData() {
+    data = "";
+    if (entidad == null ||  entidad == undefined)
+    {
+     data = await axios.get("http://127.0.0.1:8000/avance", {
       headers: {
         Authorization: `Token ${localStorage.getItem('token')}`,
       },
     });
+   }
+  else
+      {
+        console.log("http://127.0.0.1:8000/avance/?entidad"+entidad)
+        data = await axios.get("http://127.0.0.1:8000/avance/?entidad="+entidad, {
+          headers: {
+            Authorization: `Token ${localStorage.getItem('token')}`,
+          },
+        });
+      }
+
     setAvanceList(data.data);
     setAvanceAllList(data.data);
   }
@@ -46,7 +62,7 @@ export const Avance = () => {
 
   return (
     <Layout>
-      <div className={"container-widget"}>
+      
         <div className={"tasks_container"}>
           <h1 className="p-3 heading">Avance total 2024</h1>
           <div className={"table-btn-container d-flex justify-content-end pb-2"}>
@@ -97,7 +113,6 @@ export const Avance = () => {
           </table>
           {avanceList.length === 0 && <div className={"text-center py-5 fw-bold customFont"}>No hay Registros</div>}
         </div>
-      </div>
     </Layout>
   );
 }
