@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../../layout/layout';
 import axios from 'axios';
 import { values, pick, filter } from "underscore";
+import { useLocation } from 'react-router-dom';
 
 export const Avance = () => {
   const [AvanceAllList, setAvanceAllList] = useState([]);
   const [avanceList, setAvanceList] = useState([]);
   const [update] = useState(false);
+  const location = useLocation();
+  const { entidad } = location.state || {};
+
+  console.log("soy la entidad numero:",entidad);
 
   function handleSearch(e) {
     let val = e.target.value;

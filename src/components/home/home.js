@@ -51,7 +51,4 @@ export const Home = () => {
     </Layout>
   );
 
-
-
-
 };
