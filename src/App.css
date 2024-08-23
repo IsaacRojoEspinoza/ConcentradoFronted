@@ -927,19 +927,25 @@
 }
 
 .top-container {
-  background-color: #f8f9fa;
-  padding: 1rem;
-  border-bottom: 2px solid #e9ecef;
+  flex-wrap: wrap; 
 }
 
 .progress-bar-container {
-  width: 150px;
-  height: 150px;
-  text-align: center;
+  width: 10px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 1px; 
+}
+
+.progress-text {
+  margin-top: 1px; /* Espacio entre el círculo de progreso y el texto */
+  font-size: 0.9rem; /* Tamaño de fuente para el texto */
+  text-align: center; /* Centra el texto */
 }
 
 .progress-bar-container p {
-  margin-top: 10px;
+  margin-top: 1px;
   font-weight: bold;
 }
 
@@ -953,4 +959,31 @@
 
 .table-container {
   margin-top: 2rem;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.tasks-search {
+  max-width: 300px; /* Ajusta el ancho si es necesario */
+}
+
+
+.progress-bar-container {
+  width: 80px; /* Ajusta el tamaño del contenedor */
+}
+
+.progress-bar-container p {
+  margin-top: 0px;
+  font-size: 0.9rem;
+}
+
+.table-container {
+  margin-top: 0px;
+}
+
+.customFont {
+  font-family: Arial, sans-serif; /* Asegúrate de definir una fuente adecuada */
 }
