@@ -6,10 +6,11 @@ import { useLocation } from 'react-router-dom';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-
 export const Avance = () => {
   const [AvanceAllList, setAvanceAllList] = useState([]);
   const [avanceList, setAvanceList] = useState([]);
+  const [avanceTotales, setAvanceTotales] = useState([]);
+  const [nivel, setNivel] = useState([]);
   const location = useLocation();
   const { entidad } = location.state || {};
 
@@ -19,19 +20,26 @@ export const Avance = () => {
 
   async function fetchData() {
     try {
-      let url = 'http://127.0.0.1:8000/avance';
-      if (entidad) {
-        url += `/?entidad=${entidad}`;
-      }
+      // Definir URLs para los endpoints
+      const urlAvance = 'http://127.0.0.1:8000/avance';
+      const urlAvanceTotales = 'http://127.0.0.1:8000/avanceTotales/';
+      const urlNivel = 'http://127.0.0.1:8000/nivel/';
 
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Token ${localStorage.getItem('token')}`,
-        },
-      });
+      // Verificar si entidad está definida y agregarla como parámetro de consulta
+      const params = entidad ? `?entidad=${entidad}` : '';
 
-      setAvanceList(response.data);
-      setAvanceAllList(response.data);
+      // Realizar solicitudes a los tres endpoints en paralelo
+      const [avanceResponse, avanceTotalesResponse, nivelResponse] = await Promise.all([
+        axios.get(urlAvance + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
+        axios.get(urlAvanceTotales + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
+        axios.get(urlNivel + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
+      ]);
+
+      // Guardar las respuestas en los estados correspondientes
+      setAvanceList(avanceResponse.data);
+      setAvanceAllList(avanceResponse.data);
+      setAvanceTotales(avanceTotalesResponse.data);
+      setNivel(nivelResponse.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -49,13 +57,16 @@ export const Avance = () => {
     }
   }
 
-  function formatPercentage(value) {
-    return (value * 100).toFixed(2) + '%';
-  }
+  const formatPercentage = (value) => {
+    if (isNaN(value) || value === Infinity || value === -Infinity) {
+      return '0%'; // o cualquier valor predeterminado que prefieras
+    }
+    return `${(value * 100).toFixed(2)}%`; // Ajusta la cantidad de decimales según tu preferencia
+  };
 
   // Placeholder values for the progress bars
-  const progress1 = 13; // Puedes ajustar esto según tus datos reales
-  const progress2 = 13.14; // Puedes ajustar esto según tus datos reales
+  const progress1 = nivel.nivelEsperado; // Puedes ajustar esto según tus datos reales
+  const progress2 = nivel.nivelOptenido; // Puedes ajustar esto según tus datos reales
 
   return (
     <Layout>
@@ -77,31 +88,31 @@ export const Avance = () => {
 
         {/* Container for Progress Bars */}
         <div className="top-container d-flex justify-content-around align-items-center mb-4">
-  <div className="progress-bar-container">
-    <CircularProgressbar
-      value={progress1}
-      text={`${progress1}%`}
-      styles={buildStyles({
-        pathColor: '#4db8ff',
-        textColor: '#4db8ff',
-        trailColor: '#d6d6d6',
-      })}
-    />
-    <p className="progress-text">Nivel esperado</p>
-  </div>
-  <div className="progress-bar-container">
-    <CircularProgressbar
-      value={progress2}
-      text={`${progress2}%`}
-      styles={buildStyles({
-        pathColor: '#ff6f61',
-        textColor: '#ff6f61',
-        trailColor: '#d6d6d6',
-      })}
-    />
-    <p className="progress-text">Nivel Obtenido</p>
-  </div>
-</div>
+          <div className="progress-bar-container">
+            <CircularProgressbar
+              value={progress1}
+              text={`${progress1}%`}
+              styles={buildStyles({
+                pathColor: '#4db8ff',
+                textColor: '#4db8ff',
+                trailColor: '#d6d6d6',
+              })}
+            />
+            <p className="progress-text">Nivel esperado</p>
+          </div>
+          <div className="progress-bar-container">
+            <CircularProgressbar
+              value={progress2}
+              text={`${progress2}%`}
+              styles={buildStyles({
+                pathColor: '#ff6f61',
+                textColor: '#ff6f61',
+                trailColor: '#d6d6d6',
+              })}
+            />
+            <p className="progress-text">Nivel Obtenido</p>
+          </div>
+        </div>
       </div>
 
       {/* Existing Table Container */}
@@ -112,6 +123,7 @@ export const Avance = () => {
               <th scope="col">Num Entidad</th>
               <th scope="col">Nombre Entidad</th>
               <th scope="col">Distrito</th>
+              <th scope="col">Designados</th>
               <th scope="col">Incritos</th>
               <th scope="col">% inscritos/designados</th>
               <th scope="col">Con ingreso</th>
@@ -129,13 +141,14 @@ export const Avance = () => {
                 <td>{data.nombreEntidad}</td>
                 <td>{data.distrito}</td>
                 <td>{data.numeroDesignados}</td>
+                <td>{data.numeroInscritos}</td>
                 <td>{formatPercentage(data.numeroInscritos / data.numeroDesignados)}</td>
-                <td>{data.inscritosDesignados}</td>
-                <td>{formatPercentage(data.ingresoInscritos / data.numeroInscritos)}</td>
+                <td>{data.conIngreso}</td>
+                <td>{formatPercentage(data.conIngreso / data.numeroInscritos)}</td>
                 <td>{data.sinIngreso}</td>
-                <td>{formatPercentage(data.sinIngresoInscritos / data.numeroInscritos)}</td>
+                <td>{formatPercentage(data.sinIngreso / data.numeroInscritos)}</td>
                 <td>{data.concluyeron}</td>
-                <td>{formatPercentage(data.concluyeronDesignados / data.numeroDesignados)}</td>
+                <td>{formatPercentage(data.concluyeron / data.numeroDesignados)}</td>
               </tr>
             ))}
           </tbody>
