@@ -7,12 +7,12 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 export const Avance = () => {
-  const [AvanceAllList, setAvanceAllList] = useState([]);
+  const [avanceAllList, setAvanceAllList] = useState([]);
   const [avanceList, setAvanceList] = useState([]);
-  const [avanceTotales, setAvanceTotales] = useState([]);
-  const [nivel, setNivel] = useState([]);
+  const [avanceTotales, setAvanceTotales] = useState({});
+  const [nivel, setNivel] = useState({});
   const location = useLocation();
-  const { entidad } = location.state || {};
+  const { entidad } = location.state || '';
 
   useEffect(() => {
     fetchData();
@@ -20,53 +20,68 @@ export const Avance = () => {
 
   async function fetchData() {
     try {
-      // Definir URLs para los endpoints
       const urlAvance = 'http://127.0.0.1:8000/avance';
       const urlAvanceTotales = 'http://127.0.0.1:8000/avanceTotales/';
       const urlNivel = 'http://127.0.0.1:8000/nivel/';
-
-      // Verificar si entidad está definida y agregarla como parámetro de consulta
+      const headers = { Authorization: `Token ${localStorage.getItem('token')}` };
       const params = entidad ? `?entidad=${entidad}` : '';
 
-      // Realizar solicitudes a los tres endpoints en paralelo
-      const [avanceResponse, avanceTotalesResponse, nivelResponse] = await Promise.all([
-        axios.get(urlAvance + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
-        axios.get(urlAvanceTotales + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
-        axios.get(urlNivel + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
-      ]);
+      let [avanceResponse, avanceTotalesResponse, nivelResponse] = [{}, {}, {}];
 
-      // Guardar las respuestas en los estados correspondientes
+      if (params === '') {
+        [avanceResponse, avanceTotalesResponse, nivelResponse] = await Promise.all([
+          axios.get(urlAvance, { headers }),
+          axios.get(urlAvanceTotales, { headers }),  // Nota: Sin parámetros de consulta
+          axios.get(urlNivel + `?entidad=0`, { headers }),
+        ]);
+      } else {
+        [avanceResponse, avanceTotalesResponse, nivelResponse] = await Promise.all([
+          axios.get(urlAvance + params, { headers }),
+          axios.get(urlAvanceTotales + params, { headers }),
+          axios.get(urlNivel + params, { headers }),
+        ]);
+      }
+
       setAvanceList(avanceResponse.data);
       setAvanceAllList(avanceResponse.data);
-      setAvanceTotales(avanceTotalesResponse.data);
-      setNivel(nivelResponse.data);
+      setAvanceTotales(avanceTotalesResponse.data || {});
+      setNivel(nivelResponse.data || {});
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
 
   function handleSearch(e) {
-    let val = e.target.value;
+    const val = e.target.value.toLowerCase();
+    let res = [];
+
     if (val !== '') {
-      let res = filter(AvanceAllList, function (item) {
-        return values(pick(item, 'entidad', 'nombreEntidad', 'distrito', 'numeroDesignados', 'numeroInscritos', 'inscritosDesignados', 'ingreso', 'ingresoInscritos', 'sinIngreso', 'sinIngresoInscritos', 'concluyeron', 'concluyeronDesignados')).toString().toLowerCase().includes(val.toLowerCase());
-      });
+      if (entidad && entidad.trim() !== '') {
+        // Buscar por nombreEntidad si entidad tiene valor
+        res = filter(avanceList, (item) =>
+          (String(item.nombreEntidad) || '').toLowerCase().includes(val)
+        );
+      } else {
+        // Buscar por distrito si entidad está vacío
+        res = filter(avanceList, (item) =>
+          (String(item.distrito) || '').toLowerCase().includes(val)
+        );
+      }
       setAvanceList(res);
     } else {
-      setAvanceList(AvanceAllList);
+      setAvanceList(avanceList);
     }
   }
 
   const formatPercentage = (value) => {
     if (isNaN(value) || value === Infinity || value === -Infinity) {
-      return '0%'; // o cualquier valor predeterminado que prefieras
+      return '0%';
     }
-    return `${(value * 100).toFixed(2)}%`; // Ajusta la cantidad de decimales según tu preferencia
+    return `${(value * 100).toFixed(2)}%`;
   };
 
-  // Placeholder values for the progress bars
-  const progress1 = nivel.nivelEsperado; // Puedes ajustar esto según tus datos reales
-  const progress2 = nivel.nivelOptenido; // Puedes ajustar esto según tus datos reales
+  const progress1 = nivel.nivelEsperado || 0;
+  const progress2 = nivel.nivelObtenido || 0;
 
   return (
     <Layout>
@@ -91,7 +106,7 @@ export const Avance = () => {
           <div className="progress-bar-container">
             <CircularProgressbar
               value={progress1}
-              text={`${progress1}%`}
+              text={`${formatPercentage(progress1 / 100)}`}
               styles={buildStyles({
                 pathColor: '#4db8ff',
                 textColor: '#4db8ff',
@@ -103,7 +118,7 @@ export const Avance = () => {
           <div className="progress-bar-container">
             <CircularProgressbar
               value={progress2}
-              text={`${progress2}%`}
+              text={`${formatPercentage(progress2 / 100)}`}
               styles={buildStyles({
                 pathColor: '#ff6f61',
                 textColor: '#ff6f61',
@@ -152,6 +167,20 @@ export const Avance = () => {
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={3}><strong>Total</strong></td>
+              <td>{avanceTotales.totalDesignados || 0}</td>
+              <td>{avanceTotales.totalInscritos || 0}</td>
+              <td>{formatPercentage(avanceTotales.totalIncritosDesignados)}</td>
+              <td>{avanceTotales.totalConIngreso || 0}</td>
+              <td>{formatPercentage(avanceTotales.totalConIngresoInscritos)}</td>
+              <td>{avanceTotales.totalSinIngreso || 0}</td>
+              <td>{formatPercentage(avanceTotales.totalSinIngresoInscritos)}</td>
+              <td>{avanceTotales.totalConcluyeron || 0}</td>
+              <td>{formatPercentage(avanceTotales.totalConcluyeronDesignados / avanceTotales.totalIncritosDesignados )}</td>
+            </tr>
+          </tfoot>
         </table>
         {avanceList.length === 0 && <div className="text-center py-5 fw-bold customFont">No hay Registros</div>}
       </div>
