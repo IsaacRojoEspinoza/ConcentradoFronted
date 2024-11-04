@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import Layout from './layout/layout';
 import { Route, Routes } from 'react-router-dom';
 import { Home } from "./components/home/home";
+import { Periodos } from "./components/home/periodos";
 import { Tasks } from './components/tasks/tasks';
 import { Calender } from './components/calender/calender';
 import { Analysis } from './components/analysis/analysis';
@@ -29,6 +30,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/avance" element={<Avance />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/periodos" element={<Periodos />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/calendar" element={<Calender />} />
         <Route path="/analysis" element={<Analysis />} />

@@ -121,11 +121,20 @@ function Layout({ children }) {
                     </div>
                     <div className="d-flex flex-column align-items-center align-items-sm-start px-2 pt-2 text-white pt-4">
 
-                        <div className={"w-100 px-sm-2 home-mobile"}>
+                        {/* <div className={"w-100 px-sm-2 home-mobile"}>
                             <NavLink className={({ isActive }) => isActive ? "side-menu-item side-menu-active " : "side-menu-item "} to={"/home"}>
                                 <div className={'d-flex'}>
                                     <FeatherIcon icon="home" className={!open ? 'me-2' : "ms-1"} />
                                     {!open && <div className={'trans-1'}>Listado Entidades</div>}
+                                </div>
+                            </NavLink>
+                        </div> */}
+
+                        <div className={"w-100 px-sm-2 home-mobile"}>
+                            <NavLink className={({ isActive }) => isActive ? "side-menu-item side-menu-active " : "side-menu-item "} to={"/periodos"}>
+                                <div className={'d-flex'}>
+                                    <FeatherIcon icon="list" className={!open ? 'me-2' : "ms-1"} />
+                                    {!open && <div className={'trans-1'}>Listado Periodos</div>}
                                 </div>
                             </NavLink>
                         </div>

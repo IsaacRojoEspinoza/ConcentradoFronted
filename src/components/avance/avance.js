@@ -24,7 +24,6 @@ export const Avance = () => {
       const urlAvance = 'http://127.0.0.1:8000/avance';
       const urlAvanceTotales = 'http://127.0.0.1:8000/avanceTotales/';
       const urlNivel = 'http://127.0.0.1:8000/nivel/';
-      const urlPeriodo = 'http://127.0.0.1:8000/periodos/';
 
       const params = entidad ? `?entidad=${entidad}` : '';
 
@@ -32,14 +31,13 @@ export const Avance = () => {
         axios.get(urlAvance + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
         axios.get(urlAvanceTotales + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
         axios.get(urlNivel + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
-        axios.get(urlPeriodo , { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
+
       ]);
 
       setAvanceList(avanceResponse.data);
       setAvanceAllList(avanceResponse.data);
       setAvanceTotales(avanceTotalesResponse.data);
       setNivel(nivelResponse.data);
-      setPeriodo(periodoResponse.data); // Se corrigió de `setNivel` a `setPeriodo`
     } catch (error) {
       console.error('Error fetching data:', error);
     }
