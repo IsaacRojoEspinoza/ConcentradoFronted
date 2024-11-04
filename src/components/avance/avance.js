@@ -32,7 +32,7 @@ export const Avance = () => {
         axios.get(urlAvance + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
         axios.get(urlAvanceTotales + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
         axios.get(urlNivel + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
-        axios.get(urlPeriodo ),
+        axios.get(urlPeriodo , { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
       ]);
 
       setAvanceList(avanceResponse.data);
