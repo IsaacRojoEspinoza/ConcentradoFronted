@@ -1,5 +1,5 @@
 export const cardData = [
-    { title: 'Entidad num: 1', text: 'Aguscalientes', imgSrc: '/assets/icon_Aguascalientes.png',entidad:'1'},
+    { title: 'Entidad num: 1', text: 'Aguscalientes', imgSrc: '/assets/icon_Aguascalientes.png',entidad:1},
     { title: 'Entidad num: 2', text: 'Baja California', imgSrc: '/assets/icon_Baja_california_sur.png',entidad:'2'},
     { title: 'Entidad num: 3', text: 'Baja California Sur', imgSrc: '/assets/icon_Baja_california.png',entidad:'3'},
     { title: 'Entidad num: 4', text: 'Campeche', imgSrc: '/assets/icon_Campeche.png',entidad:'4'},

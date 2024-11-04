@@ -7,10 +7,11 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 export const Avance = () => {
-  const [AvanceAllList, setAvanceAllList] = useState([]);
+  const [avanceAllList, setAvanceAllList] = useState([]);
   const [avanceList, setAvanceList] = useState([]);
   const [avanceTotales, setAvanceTotales] = useState([]);
-  const [nivel, setNivel] = useState([]);
+  const [nivel, setNivel] = useState({});
+  const [periodo, setPeriodo] = useState([]);
   const location = useLocation();
   const { entidad } = location.state || {};
 
@@ -20,53 +21,52 @@ export const Avance = () => {
 
   async function fetchData() {
     try {
-      // Definir URLs para los endpoints
       const urlAvance = 'http://127.0.0.1:8000/avance';
       const urlAvanceTotales = 'http://127.0.0.1:8000/avanceTotales/';
       const urlNivel = 'http://127.0.0.1:8000/nivel/';
+      const urlPeriodo = 'http://127.0.0.1:8000/periodos/';
 
-      // Verificar si entidad está definida y agregarla como parámetro de consulta
       const params = entidad ? `?entidad=${entidad}` : '';
 
-      // Realizar solicitudes a los tres endpoints en paralelo
-      const [avanceResponse, avanceTotalesResponse, nivelResponse] = await Promise.all([
+      const [avanceResponse, avanceTotalesResponse, nivelResponse, periodoResponse] = await Promise.all([
         axios.get(urlAvance + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
         axios.get(urlAvanceTotales + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
         axios.get(urlNivel + params, { headers: { Authorization: `Token ${localStorage.getItem('token')}` } }),
+        axios.get(urlPeriodo ),
       ]);
 
-      // Guardar las respuestas en los estados correspondientes
       setAvanceList(avanceResponse.data);
       setAvanceAllList(avanceResponse.data);
       setAvanceTotales(avanceTotalesResponse.data);
       setNivel(nivelResponse.data);
+      setPeriodo(periodoResponse.data); // Se corrigió de `setNivel` a `setPeriodo`
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
 
   function handleSearch(e) {
-    let val = e.target.value;
+    const val = e.target.value;
     if (val !== '') {
-      let res = filter(AvanceAllList, function (item) {
-        return values(pick(item, 'entidad', 'nombreEntidad', 'distrito', 'numeroDesignados', 'numeroInscritos', 'inscritosDesignados', 'ingreso', 'ingresoInscritos', 'sinIngreso', 'sinIngresoInscritos', 'concluyeron', 'concluyeronDesignados')).toString().toLowerCase().includes(val.toLowerCase());
+      const res = filter(avanceAllList, (item) => {
+        return values(pick(item, 'numero_entidad', 'nombre', 'distrito', 'numero_designados', 'numero_inscritos', 'inscritos_designados', 'con_ingreso', 'con_ingreso_inscritos', 'sin_ingreso', 'sin_ingreso_inscritos', 'concluyeron', 'concluyeron_designados')).toString().toLowerCase().includes(val.toLowerCase());
       });
       setAvanceList(res);
     } else {
-      setAvanceList(AvanceAllList);
+      setAvanceList(avanceAllList);
     }
   }
 
   const formatPercentage = (value) => {
-    if (isNaN(value) || value === Infinity || value === -Infinity) {
-      return '0%'; // o cualquier valor predeterminado que prefieras
+    if (isNaN(value) || value === Infinity || value === -Infinity || value === 0) {
+      return '0%'; // Ajusta el valor predeterminado según tu preferencia
     }
     return `${(value * 100).toFixed(2)}%`; // Ajusta la cantidad de decimales según tu preferencia
   };
 
   // Placeholder values for the progress bars
-  const progress1 = nivel.nivelEsperado; // Puedes ajustar esto según tus datos reales
-  const progress2 = nivel.nivelOptenido; // Puedes ajustar esto según tus datos reales
+  const progress1 = nivel.nivel_esperado || 0; // Evitar NaN si no hay valor
+  const progress2 = nivel.nivel_obtenido || 0; // Evitar NaN si no hay valor
 
   return (
     <Layout>
@@ -137,18 +137,18 @@ export const Avance = () => {
           <tbody>
             {avanceList.map((data, index) => (
               <tr key={index}>
-                <td>{data.entidad}</td>
-                <td>{data.nombreEntidad}</td>
+                <td>{data.numero_entidad}</td>
+                <td>{data.nombre}</td>
                 <td>{data.distrito}</td>
-                <td>{data.numeroDesignados}</td>
-                <td>{data.numeroInscritos}</td>
-                <td>{formatPercentage(data.numeroInscritos / data.numeroDesignados)}</td>
-                <td>{data.conIngreso}</td>
-                <td>{formatPercentage(data.conIngreso / data.numeroInscritos)}</td>
-                <td>{data.sinIngreso}</td>
-                <td>{formatPercentage(data.sinIngreso / data.numeroInscritos)}</td>
+                <td>{data.numero_designados}</td>
+                <td>{data.numero_inscritos}</td>
+                <td>{formatPercentage(data.numero_inscritos / data.numero_designados)}</td>
+                <td>{data.con_ingreso}</td>
+                <td>{formatPercentage(data.con_ingreso / data.numero_inscritos)}</td>
+                <td>{data.sin_ingreso}</td>
+                <td>{formatPercentage(data.sin_ingreso / data.numero_inscritos)}</td>
                 <td>{data.concluyeron}</td>
-                <td>{formatPercentage(data.concluyeron / data.numeroDesignados)}</td>
+                <td>{formatPercentage(data.concluyeron / data.concluyeron_designados)}</td>
               </tr>
             ))}
           </tbody>
